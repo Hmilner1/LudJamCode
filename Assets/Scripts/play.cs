@@ -28,8 +28,18 @@ public class play : MonoBehaviour
         Application.Quit();
     }
 
+    public void Options()
+    {
+        SceneManager.LoadScene("Options");
+    }
+
     public void Credits()
     {
         SceneManager.LoadScene("Credits");
+    }
+
+    public void Back()
+    {
+        SceneManager.LoadScene("Main Menu");
     }
 }

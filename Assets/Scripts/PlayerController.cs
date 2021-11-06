@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class PlayerController : PhysicsObject
 {
+    /*
     public float jumpTakeOffSpeed = 7f;
     public float maxSpeed = 7f;
     public float ballHitSpeed = 2f;
@@ -89,4 +90,5 @@ public class PlayerController : PhysicsObject
         //float vely = ballHitSpeed * Mathf.Sin(relativeAngle * Mathf.Deg2Rad);
         //body.velocity = new Vector2(velx, vely);
     }
+    */
 }

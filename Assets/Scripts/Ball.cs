@@ -22,7 +22,11 @@ public class Ball : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-
+        if (Input.GetMouseButtonDown(0))
+        {
+            SoundManagerScript.PlaySound("pop");
+            Destroy(gameObject);
+        }
     }
 
     private void FixedUpdate()

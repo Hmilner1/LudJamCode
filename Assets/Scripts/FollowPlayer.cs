@@ -14,10 +14,9 @@ public class FollowPlayer : MonoBehaviour
 
     public Vector3 minValue, maxValue;
 
-    // Start is called before the first frame update
     void Start()
     {
-        //startingPositionY = transform.position.y;
+        transform.position = new Vector2(target.position.x, Mathf.Clamp(target.position.y, -0.013f, 23.34f));
     }
 
     void Awake()
@@ -26,7 +25,6 @@ public class FollowPlayer : MonoBehaviour
         Application.targetFrameRate = 144;
     }
 
-    // Update is called once per frame
     void Update()
     {
         //Vector3 newPosition = new Vector3(Mathf.Clamp(playerCharacter.transform.position.x, -2.395f, -0.431f), Mathf.Clamp(playerCharacter.transform.position.y, startingPositionY, float.MaxValue));

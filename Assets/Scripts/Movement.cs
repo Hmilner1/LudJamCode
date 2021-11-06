@@ -30,6 +30,10 @@ public class Movement : MonoBehaviour
     //public float test = 4f;
     private AudioSource footStep;
     public ParticleSystem Dust;
+    [SerializeField]
+    private float playerSaveX;
+    [SerializeField]
+    private float playerSaveY;
 
     // Start is called before the first frame update
     void Start()
@@ -37,6 +41,12 @@ public class Movement : MonoBehaviour
         m_RB = GetComponent<Rigidbody2D>();
         footStep = GetComponent<AudioSource>();
         previousGravityScale = fallingGravityScale;
+        LoadGame();
+    }
+
+    private void Awake()
+    {
+        
     }
 
     // Update is called once per frame
@@ -49,44 +59,57 @@ public class Movement : MonoBehaviour
             if (isGrounded)
             {
                 fallingGravityScale = previousGravityScale;
-                if ((m_RB.velocity.x > 0.02f && m_RB.velocity.y == 0f && Input.GetKey(KeyCode.D)) || (m_RB.velocity.x > 0.3f))
+                if ((m_RB.velocity.x > 0.02f && m_RB.velocity.y == 0f && Input.GetKey(KeyCode.D)))
                 {
                     animator.SetInteger("Move", 2);
-                    animator.speed = (Mathf.Abs((m_RB.velocity.x * animSpeed)*m_MoveSpeed/4));
+                    animator.speed = (Mathf.Abs((m_RB.velocity.x * animSpeed) * m_MoveSpeed / 5));
                     CreateDust();
-                } else if ((m_RB.velocity.x < -0.02f && m_RB.velocity.y == 0f && Input.GetKey(KeyCode.A)) || (m_RB.velocity.x < -0.3f))
+                }
+                else if ((m_RB.velocity.x < -0.02f && m_RB.velocity.y == 0f && Input.GetKey(KeyCode.A)))
                 {
-                   animator.SetInteger("Move", 1);
-                   animator.speed = (Mathf.Abs((m_RB.velocity.x * animSpeed)*m_MoveSpeed/4));
+                    animator.SetInteger("Move", 1);
+                    animator.speed = (Mathf.Abs((m_RB.velocity.x * animSpeed) * m_MoveSpeed / 5));
                     CreateDust();
-                } else
+                }
+                else
                 {
                     animator.SetInteger("Move", 0);
                     animator.speed = 1;
                 }
-                
-                if (Input.GetKey(KeyCode.A))
-                {
-                    m_RB.AddForce(-transform.right * m_MoveSpeed, ForceMode2D.Force);
-                }
-                if (Input.GetKey(KeyCode.D))
-                {
-                    m_RB.AddForce(transform.right * m_MoveSpeed, ForceMode2D.Force);
-                }
 
                 if (Input.GetKeyDown(KeyCode.Space))
                 {
-                    SoundManagerScript.PlaySound("Jump");
                     m_RB.AddForce(Vector2.up * jumpAmount, ForceMode2D.Impulse);
+                    SoundManagerScript.PlaySound("Jump");
+
+                    //Activate ball spawn timer
+                    if (GameObject.FindGameObjectsWithTag("Ball").Length == 0 && !ballHit)
+                    {
+                        timer = ballSpawnTime;
+                        timerOn = true;
+                        animator.SetInteger("Move", 5);
+                    }
                 }
-            } else if (!sliding && fallingGravityScale < 3)
+            }
+            else if (!sliding && fallingGravityScale < 3)
             {
-                fallingGravityScale += gravityIncreasePerSecond*(Time.deltaTime/2);
+                fallingGravityScale += gravityIncreasePerSecond * (Time.deltaTime / 2);
             }
 
             if (m_RB.velocity.y >= 0)
             {
                 m_RB.gravityScale = gravityScale;
+            }
+            else if (m_RB.velocity.y < 0f && animator.GetInteger("Move") != 6 && (animator.GetInteger("Move") != 9))
+            {
+                m_RB.gravityScale = fallingGravityScale;
+                Quaternion neutralRotation = Quaternion.identity;
+                if (transform.rotation != neutralRotation)
+                {
+                    transform.rotation = neutralRotation;
+                }
+                animator.SetInteger("Move", 7);
+                animator.speed = Mathf.Abs((m_RB.velocity.y * animSpeed) * m_MoveSpeed / 4);
             }
             else if (m_RB.velocity.y < -1.2f)
             {
@@ -97,13 +120,8 @@ public class Movement : MonoBehaviour
                     transform.rotation = neutralRotation;
                 }
                 animator.SetInteger("Move", 7);
-                animator.speed = Mathf.Abs((m_RB.velocity.y * animSpeed) * m_MoveSpeed);
+                animator.speed = Mathf.Abs((m_RB.velocity.y * animSpeed) * m_MoveSpeed / 4);
             }
-        }
-        else
-        {
-            m_RB.velocity = Vector3.zero;
-            m_RB.gravityScale = 0.4f;
         }
 
         //Ball spawn timer code
@@ -119,32 +137,47 @@ public class Movement : MonoBehaviour
                 timerOn = false;
                 Instantiate(ballPrefab, transform.position + Vector3.up * heightOffset, Quaternion.identity);
                 launchIndicator.SetActive(true);
-            } else
+            }
+            else
             {
                 timer -= Time.deltaTime;
             }
         }
 
-        //Activate ball spawn timer
-        if (Input.GetKeyDown(KeyCode.Space) && isGrounded)
+        //Reset game
+        if (Input.GetKeyDown(KeyCode.R))
         {
-            if (GameObject.FindGameObjectsWithTag("Ball").Length == 0 && !ballHit)
-            {
-                timer = ballSpawnTime;
-                timerOn = true;
-                animator.SetInteger("Move", 5);
-            }
+            transform.position = new Vector2(-2.963f, -0.778f);
         }
 
-        if (Input.GetKeyDown(KeyCode.Escape))
+        if (Input.GetKeyUp(KeyCode.Escape))
         {
-            Application.Quit();
+            SaveGame();
         }
     }
 
     private void FixedUpdate()
     {
-        //Debug.Log(m_RB.velocity.y);
+        if (GameObject.FindGameObjectsWithTag("Ball").Length == 0)
+        {
+            if (isGrounded)
+            {
+                if (Input.GetKey(KeyCode.A))
+                {
+                    m_RB.AddForce(-transform.right * m_MoveSpeed, ForceMode2D.Force);
+                }
+
+                if (Input.GetKey(KeyCode.D))
+                {
+                    m_RB.AddForce(transform.right * m_MoveSpeed, ForceMode2D.Force);
+                }
+            }
+        }
+        else
+        {
+            m_RB.velocity = Vector3.zero;
+            m_RB.gravityScale = 0.4f;
+        }
     }
 
     //Ball and reset ball code
@@ -202,6 +235,20 @@ public class Movement : MonoBehaviour
         } else if (collision.gameObject.tag == "WindLeft")
         {
             m_RB.AddForce(new Vector3(-1.0f, 0, 0) * windSpeed, ForceMode2D.Force);
+        }
+        else if (collision.gameObject.tag == "ResetBall")
+        {
+            GameObject resetBall = GameObject.FindGameObjectWithTag("ResetBall");
+            transform.rotation = Quaternion.LookRotation(Vector3.forward, resetBall.transform.position - transform.position);
+            m_RB.AddForce(transform.up * -ballHitSpeed, ForceMode2D.Impulse);
+            if (m_RB.velocity.x > 0)
+            {
+                animator.SetInteger("Move", 9);
+            }
+            else
+            {
+                animator.SetInteger("Move", 6);
+            }
         }
     }
 
@@ -277,5 +324,25 @@ public class Movement : MonoBehaviour
     private void CreateDust()
     {
         Dust.Play();
+    }
+
+    private void SaveGame()
+    {
+        playerSaveX = transform.position.x;
+        playerSaveY = transform.position.y;
+        PlayerPrefs.SetFloat("saveX", playerSaveX);
+        PlayerPrefs.SetFloat("saveY", playerSaveY);
+    }
+
+    private void LoadGame()
+    {
+        float tempX = PlayerPrefs.GetFloat("saveX");
+        float tempY = PlayerPrefs.GetFloat("saveY");
+        if (tempX == 0 && tempY == 0)
+        {
+            tempX = -2.963f;
+            tempY = -0.778f;
+        }
+        transform.position = new Vector2(tempX, tempY);
     }
 }

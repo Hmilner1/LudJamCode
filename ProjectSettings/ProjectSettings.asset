@@ -19,11 +19,11 @@ PlayerSettings:
   m_SplashScreenBackgroundColor: {r: 0.58469784, g: 0.9622642, b: 0.54013884, a: 1}
   m_ShowUnitySplashScreen: 1
   m_ShowUnitySplashLogo: 1
-  m_SplashScreenOverlayOpacity: 0.5
+  m_SplashScreenOverlayOpacity: 0.606
   m_SplashScreenAnimation: 2
-  m_SplashScreenLogoStyle: 0
+  m_SplashScreenLogoStyle: 1
   m_SplashScreenDrawMode: 0
-  m_SplashScreenBackgroundAnimationZoom: 1
+  m_SplashScreenBackgroundAnimationZoom: 0.302
   m_SplashScreenLogoAnimationZoom: 1
   m_SplashScreenBackgroundLandscapeAspect: 1
   m_SplashScreenBackgroundPortraitAspect: 1
@@ -582,9 +582,9 @@ PlayerSettings:
   - libSceS3DConversion.prx
   ps4attribVROutputEnabled: 0
   monoEnv: 
-  splashScreenBackgroundSourceLandscape: {fileID: 21300000, guid: 8eb217ae1ecf42249bd14925bdcfd0f3, type: 3}
+  splashScreenBackgroundSourceLandscape: {fileID: 21300000, guid: 8b45de203bd3268479f7fe14a87237db, type: 3}
   splashScreenBackgroundSourcePortrait: {fileID: 0}
-  blurSplashScreenBackground: 1
+  blurSplashScreenBackground: 0
   spritePackerPolicy: 
   webGLMemorySize: 16
   webGLExceptionSupport: 1
@@ -624,11 +624,11 @@ PlayerSettings:
   m_MobileRenderingPath: 1
   metroPackageName: TemplateLightweight
   metroPackageVersion: 1.0.0.0
-  metroCertificatePath: 
+  metroCertificatePath: Assets\WSATestCertificate.pfx
   metroCertificatePassword: 
-  metroCertificateSubject: 
-  metroCertificateIssuer: 
-  metroCertificateNotAfter: 0000000000000000
+  metroCertificateSubject: Ham Productions
+  metroCertificateIssuer: Ham Productions
+  metroCertificateNotAfter: 8043a21a37ebd801
   metroApplicationDescription: Template_Lightweight
   wsaImages: {}
   metroTileShortName: LudJam
